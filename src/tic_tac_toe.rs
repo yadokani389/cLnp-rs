@@ -43,6 +43,7 @@ impl EventHandler for Handler {
                 {
                     Some(x) => x,
                     None => {
+                        // Timeout
                         components = Vec::new();
                         for i in 0..3 {
                             let mut row = Vec::new();
@@ -79,6 +80,7 @@ impl EventHandler for Handler {
 
                 let mut end = false;
                 {
+                    // Check for winner
                     let mut winner = "\0";
                     for i in 0..3 {
                         if board[i * 3] == board[i * 3 + 1]
