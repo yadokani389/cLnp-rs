@@ -1,10 +1,14 @@
-use serenity::all::{CommandInteraction, Context, CreateActionRow, EditMessage};
-use serenity::builder::{
-    CreateButton, CreateCommand, CreateInteractionResponse, CreateInteractionResponseMessage,
+use poise::CreateReply;
+use serenity::all::{
+    CreateActionRow, CreateButton, CreateInteractionResponse, CreateInteractionResponseMessage,
+    EditMessage,
 };
 use std::time::Duration;
 
-pub async fn run(ctx: Context, command: CommandInteraction) {
+use crate::{Context, Error};
+
+#[poise::command(slash_command)]
+pub async fn tic_tac_toe(ctx: Context<'_>) -> Result<(), Error> {
     let mut board = ["\0"; 9];
 
     let make_components = |board: &[&str; 9], end: bool| {
@@ -23,24 +27,20 @@ pub async fn run(ctx: Context, command: CommandInteraction) {
         components
     };
 
-    command
-        .create_response(
-            &ctx,
-            CreateInteractionResponse::Message(
-                CreateInteractionResponseMessage::new()
-                    .content("O's turn!")
-                    .components(make_components(&board, false)),
-            ),
+    let mut m = ctx
+        .send(
+            CreateReply::default()
+                .content("O's turn!")
+                .components(make_components(&board, false)),
         )
-        .await
-        .unwrap();
-
-    let mut m = command.get_response(&ctx).await.unwrap();
+        .await?
+        .into_message()
+        .await?;
 
     let mut count = 0;
     loop {
         let interaction = match m
-            .await_component_interaction(&ctx.shard)
+            .await_component_interaction(&ctx)
             .timeout(Duration::from_secs(10))
             .await
         {
@@ -53,13 +53,12 @@ pub async fn run(ctx: Context, command: CommandInteraction) {
                         .content("Timed out")
                         .components(make_components(&board, true)),
                 )
-                .await
-                .unwrap();
-                return;
+                .await?;
+                return Ok(());
             }
         };
 
-        let pos = interaction.data.custom_id.parse::<usize>().unwrap();
+        let pos = interaction.data.custom_id.parse::<usize>()?;
         board[pos] = if count % 2 == 0 { "O" } else { "X" };
 
         let mut response = CreateInteractionResponseMessage::default().content(if count % 2 == 0 {
@@ -106,16 +105,11 @@ pub async fn run(ctx: Context, command: CommandInteraction) {
                     response.components(make_components(&board, end)),
                 ),
             )
-            .await
-            .unwrap();
+            .await?;
 
         if end {
-            return;
+            return Ok(());
         }
         count += 1;
     }
-}
-
-pub fn register() -> CreateCommand {
-    CreateCommand::new("tic_tac_toe").description("Start game")
 }
