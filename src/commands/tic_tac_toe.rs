@@ -1,8 +1,5 @@
+use poise::serenity_prelude::*;
 use poise::CreateReply;
-use serenity::all::{
-    CreateActionRow, CreateButton, CreateInteractionResponse, CreateInteractionResponseMessage,
-    EditMessage,
-};
 use std::time::Duration;
 
 use crate::{Context, Error};
@@ -40,7 +37,7 @@ pub async fn tic_tac_toe(ctx: Context<'_>) -> Result<(), Error> {
     let mut count = 0;
     loop {
         let interaction = match m
-            .await_component_interaction(&ctx)
+            .await_component_interaction(ctx)
             .timeout(Duration::from_secs(10))
             .await
         {
