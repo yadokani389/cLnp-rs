@@ -1,9 +1,8 @@
 use dotenv::dotenv;
-use serenity::model::prelude::*;
 use serenity::prelude::*;
 use std::env;
 
-mod tic_tac_toe;
+mod commands;
 
 #[tokio::main]
 async fn main() {
@@ -14,7 +13,7 @@ async fn main() {
         | GatewayIntents::MESSAGE_CONTENT;
 
     let mut client = Client::builder(&token, intents)
-        .event_handler(tic_tac_toe::Handler)
+        .event_handler(commands::Handler)
         .await
         .expect("Err creating client");
 
