@@ -69,20 +69,17 @@ pub async fn tic_tac_toe(ctx: Context<'_>) -> Result<(), Error> {
             // Check for winner
             let mut winner = "\0";
             for i in 0..3 {
-                if board[i * 3] == board[i * 3 + 1]
-                    && board[i * 3 + 1] == board[i * 3 + 2]
-                    && board[i * 3] != "\0"
-                {
+                if board.iter().skip(i * 3).take(3).all(|b| *b != "\0") {
                     winner = board[i * 3];
                 }
-                if board[i] == board[3 + i] && board[3 + i] == board[6 + i] && board[i] != "\0" {
+                if board.iter().skip(i).step_by(3).all(|b| *b != "\0") {
                     winner = board[i];
                 }
             }
-            if board[0] == board[4] && board[4] == board[8] && board[0] != "\0" {
+            if board.iter().step_by(4).all(|b| *b != "\0") {
                 winner = board[0];
             }
-            if board[2] == board[4] && board[4] == board[6] && board[6] != "\0" {
+            if board.iter().skip(2).step_by(2).take(3).all(|b| *b != "\0") {
                 winner = board[2];
             }
             if winner != "\0" {
