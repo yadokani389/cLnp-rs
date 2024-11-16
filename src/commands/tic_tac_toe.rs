@@ -1,8 +1,9 @@
+use anyhow::Error;
 use poise::serenity_prelude::*;
 use poise::CreateReply;
 use std::time::Duration;
 
-use crate::{Context, Error};
+use crate::Context;
 
 #[poise::command(slash_command)]
 pub async fn tic_tac_toe(ctx: Context<'_>) -> Result<(), Error> {

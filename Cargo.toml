@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.93"
 dotenvy = "0.15.0"
 poise = "0.6.1"
 tokio = { version = "1.21.2", features = ["macros", "rt-multi-thread"] }
