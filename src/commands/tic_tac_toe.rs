@@ -1,4 +1,5 @@
 use anyhow::Error;
+use itertools::Itertools;
 use poise::serenity_prelude::*;
 use poise::CreateReply;
 use std::time::Duration;
@@ -70,17 +71,41 @@ pub async fn tic_tac_toe(ctx: Context<'_>) -> Result<(), Error> {
             // Check for winner
             let mut winner = "\0";
             for i in 0..3 {
-                if board.iter().skip(i * 3).take(3).all(|b| *b != "\0") {
+                if board
+                    .iter()
+                    .skip(i * 3)
+                    .take(3)
+                    .tuple_windows()
+                    .all(|(prev, next)| prev == next)
+                {
                     winner = board[i * 3];
                 }
-                if board.iter().skip(i).step_by(3).all(|b| *b != "\0") {
+                if board
+                    .iter()
+                    .skip(i)
+                    .step_by(3)
+                    .tuple_windows()
+                    .all(|(prev, next)| prev == next)
+                {
                     winner = board[i];
                 }
             }
-            if board.iter().step_by(4).all(|b| *b != "\0") {
+            if board
+                .iter()
+                .step_by(4)
+                .tuple_windows()
+                .all(|(prev, next)| prev == next)
+            {
                 winner = board[0];
             }
-            if board.iter().skip(2).step_by(2).take(3).all(|b| *b != "\0") {
+            if board
+                .iter()
+                .skip(2)
+                .step_by(2)
+                .take(3)
+                .tuple_windows()
+                .all(|(prev, next)| prev == next)
+            {
                 winner = board[2];
             }
             if winner != "\0" {
